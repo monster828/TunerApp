@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Voice Recorder</title>
+    <link rel="stylesheet" href="tuner.css"/>
+</head>
+<body>
+    <div class="container" id="thecontainer">
+        <button id="back" onclick="goBack()">&larr;</button>
+        <div class="display">
+
+        </div>
+
+        <div class="controllers">
+
+        </div>
+        <div id="guidecontainer">
+            <h3 id="guide">Select a String</h3>
+            <div id="guideVisual">This is the guide for visuals</div>
+        </div>
+
+        <div id="contain"> 
+            <div class="strings">
+                <button id="string1" class="string" onclick="selectString('1')"></button>
+                <button id="string2" class="string" onclick="selectString('2')"></button>
+                <button id="string3" class="string" onclick="selectString('3')"></button>
+                <button id="string4" class="string" onclick="selectString('4')"></button>
+                <button id="string5" class="string" onclick="selectString('5')"></button>
+                <button id="string6" class="string" onclick="selectString('6')"></button>
+            </div>
+            <img src="" id="instrument">
+        </div>
+        
+    </div>
+</body>
+<script src="Tuner.js"></script>
+</html>

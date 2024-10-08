@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Voice Recorder</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <div class="instruments">
+        <div class="bow-strings">
+            <div class="instrument" id="Violin" onclick="ToTuner('Violin')">
+                <button>Violin</button>
+            </div>
+            <div class="instrument" id="Viola" onclick="ToTuner('Viola')">
+                <button>Viola</button>
+            </div>
+            <div class="instrument" id="Cello" onclick="ToTuner('Cello')">
+                <button>Cello</button>
+            </div>
+            <div class="instrument" id="Bass" onclick="ToTuner('Bass')">
+                <button>Bass</button>
+            </div>
+        </div>
+        <div class="hand-strings">
+            <div class="instrument">
+                <button>Guitar</button>
+            </div>
+            <div class="instrument">
+                <button>Ukulele</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
