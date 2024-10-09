@@ -44,4 +44,37 @@ button{
 
 .string{
     margin-right: 1%;
+} 
+
+.needle {
+    height: 200px;
+    width: 2px;
+    background: black;
+    position:absolute;
+    top: 15px;
+    left: 55px;
+}
+
+#needle {
+
+    background: red;
+    transform-origin: bottom;
+    transform: rotate(0deg);
+    transition: transform 0.1s ease-out;
+    z-index: 20;
+}
+
+.visualGuide{
+    position: relative;
+    height: 230px;
+}
+
+#left-line{
+    position:absolute;
+    transform-origin: bottom;
+    transform: rotate(-15deg);
+}
+#right-line{
+    transform-origin: bottom;
+    transform: rotate(15deg);
 }
