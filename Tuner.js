@@ -144,24 +144,41 @@ const startPitchDetection = () => {
     pitchInterval = setInterval(() => {
         analyser.getFloatTimeDomainData(dataArray);
         const pitch = autoCorrelate(dataArray, audioContext.sampleRate);
-
         // Only show valid pitches (ignore very high or very low outliers)
         if (pitch !== -1 && pitch >= 50 && pitch <= 4000) {
             clearDisplay();  // Clear previous Hz before showing new pitch
             addRealTimePitchMessage(`Pitch: ${Math.round(pitch)} Hz`);
             console.log(pitches[stringSelected - 1]);
-            if (stringSelected > 0){
-                if (pitch - (distancesBetweenHz[stringSelected - 1] / 5) > pitches[stringSelected - 1]){
-                    // need to loosen the string
+            if (stringSelected > 0) {
+                const deviation = pitch - pitches[stringSelected - 1];  // Calculate deviation
+                const scaleFactor = 2;  // Adjust this to fine-tune needle sensitivity
+                const rotationAngle = deviation * scaleFactor;
+            
+                setNeedleRotation(rotationAngle);  // Rotate needle based on pitch deviation
+                
+                const needle = document.getElementById("needle");
+
+                if (deviation > distancesBetweenHz[stringSelected - 1] / 5) {
                     guide.textContent = 'Loosen the string';
-    
-                }else if(pitch + (distancesBetweenHz[stringSelected - 1] / 5) < pitches[stringSelected - 1]){
-                    // need to tighten the string
+                    needle.style.backgroundColor = 'red';
+                } else if (deviation < -(distancesBetweenHz[stringSelected - 1] / 5)) {
                     guide.textContent = 'Tighten the string';
-    
-                }else{
+                    needle.style.backgroundColor = 'red';
+                } else {
                     guide.textContent = 'Perfect';
+                    needle.style.backgroundColor = 'green';
                 }
+                // if (pitch - (distancesBetweenHz[stringSelected - 1] / 5) > pitches[stringSelected - 1]){
+                //     // need to loosen the string
+                //     guide.textContent = 'Loosen the string';
+    
+                // }else if(pitch + (distancesBetweenHz[stringSelected - 1] / 5) < pitches[stringSelected - 1]){
+                //     // need to tighten the string
+                //     guide.textContent = 'Tighten the string';
+    
+                // }else{
+                //     guide.textContent = 'Perfect';
+                // }
             }
         }
     }, 200);  // Update pitch every 0.2 seconds
@@ -228,3 +245,21 @@ addRealTimePitchMessage('Violin');
 function visualizeTuner(){
 
 }
+
+const needleMaxRotation = 15;
+
+function setNeedleRotation(deviation) {
+    const needle = document.getElementById('needle');
+    if (needleMaxRotation < Math.abs(deviation)){
+        deviation = needleMaxRotation * Math.abs(deviation) / deviation;
+    }
+
+    console.log(deviation);
+    
+    needle.style.transform = `rotate(${deviation}deg)`;
+}
+
+// Example: Update the needle position with a random deviation for demo purposes
+setInterval(() => {
+
+}, 400);
