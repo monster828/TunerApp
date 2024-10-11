@@ -137,26 +137,36 @@ const addMessage = (text) => {
 let pitchInterval;
 
 const startPitchDetection = () => {
-    analyser.fftSize = 4096;  // Increased FFT size for better resolution
+    analyser.fftSize = 8192;  // Increased FFT size for better resolution
     const bufferLength = analyser.frequencyBinCount;
     dataArray = new Float32Array(bufferLength);
+    let lastPitch;
+    const maxChange = 20;
 
     pitchInterval = setInterval(() => {
         analyser.getFloatTimeDomainData(dataArray);
-        const pitch = autoCorrelate(dataArray, audioContext.sampleRate);
+        let pitch = autoCorrelate(dataArray, audioContext.sampleRate);
+
+        // if (Math.abs(pitch - lastPitch) > maxChange){
+        //     lastPitch = pitch;
+        //     pitch = maxChange * Math.abs(pitch) / pitch;
+        // }else{
+        //     lastPitch = pitch;
+        // }
+
         // Only show valid pitches (ignore very high or very low outliers)
-        if (pitch !== -1 && pitch >= 50 && pitch <= 4000) {
+        if (pitch !== -1 && pitch >= 20 && pitch <= 1000) {
             clearDisplay();  // Clear previous Hz before showing new pitch
             addRealTimePitchMessage(`Pitch: ${Math.round(pitch)} Hz`);
             console.log(pitches[stringSelected - 1]);
             if (stringSelected > 0) {
                 const deviation = pitch - pitches[stringSelected - 1];  // Calculate deviation
-                const scaleFactor = 2;  // Adjust this to fine-tune needle sensitivity
+                const scaleFactor = 1;  // Adjust this to fine-tune needle sensitivity
                 const rotationAngle = deviation * scaleFactor;
             
                 setNeedleRotation(rotationAngle);  // Rotate needle based on pitch deviation
                 
-                const needle = document.getElementById("needle");
+                const needle = document.getElementById('needle');
 
                 if (deviation > distancesBetweenHz[stringSelected - 1] / 5) {
                     guide.textContent = 'Loosen the string';
@@ -181,7 +191,7 @@ const startPitchDetection = () => {
                 // }
             }
         }
-    }, 200);  // Update pitch every 0.2 seconds
+    }, 100);  // Update pitch every 0.2 seconds
 };
 
 const addRealTimePitchMessage = (text) => {
@@ -240,7 +250,7 @@ const autoCorrelate = (buffer, sampleRate) => {
     return -1;
 };
 
-addRealTimePitchMessage('Violin');
+addRealTimePitchMessage(instrument);
 
 function visualizeTuner(){
 
