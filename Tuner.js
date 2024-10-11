@@ -218,7 +218,7 @@ const autoCorrelate = (buffer, sampleRate) => {
 
     rms = Math.sqrt(rms / SIZE);
 
-    if (rms < 0.01) {  // If the signal is too weak
+    if (rms < 0.3) {  // If the signal is too weak
         return -1;
     }
 
