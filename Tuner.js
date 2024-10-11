@@ -100,12 +100,12 @@ function SetupAudio(){
                 // Create an audio context and analyser
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
-                analyser.fftSize = 16384;  // Increase FFT size for better resolution
+                analyser.fftSize = 8192;  // Increase FFT size for better resolution
 
                 // Apply a low-pass filter to remove high frequencies
                 const lowpassFilter = audioContext.createBiquadFilter();
                 lowpassFilter.type = "lowpass";
-                lowpassFilter.frequency.setValueAtTime(4000, audioContext.currentTime);  // Limit to 4kHz
+                lowpassFilter.frequency.setValueAtTime(2000, audioContext.currentTime);  // Limit to 4kHz
 
                 streamSource = audioContext.createMediaStreamSource(stream);
                 streamSource.connect(lowpassFilter);
@@ -155,7 +155,7 @@ const startPitchDetection = () => {
         // }
 
         // Only show valid pitches (ignore very high or very low outliers)
-        if (pitch !== -1 && pitch >= 20 && pitch <= 1000) {
+        if (pitch !== -1 && pitch >= 10 && pitch <= 1000) {
             clearDisplay();  // Clear previous Hz before showing new pitch
             addRealTimePitchMessage(`Pitch: ${Math.round(pitch)} Hz`);
             console.log(pitches[stringSelected - 1]);
@@ -218,7 +218,7 @@ const autoCorrelate = (buffer, sampleRate) => {
 
     rms = Math.sqrt(rms / SIZE);
 
-    if (rms < 0.02) {  // If the signal is too weak
+    if (rms < 0.01) {  // If the signal is too weak
         return -1;
     }
 
