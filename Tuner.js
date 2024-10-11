@@ -136,38 +136,31 @@ const addMessage = (text) => {
 // Pitch detection function
 let pitchInterval;
 
+// Start pitch detection
 const startPitchDetection = () => {
     analyser.fftSize = 8192;  // Increased FFT size for better resolution
     const bufferLength = analyser.frequencyBinCount;
     dataArray = new Float32Array(bufferLength);
-    let lastPitch;
-    const maxChange = 20;
 
     pitchInterval = setInterval(() => {
         analyser.getFloatTimeDomainData(dataArray);
         let pitch = autoCorrelate(dataArray, audioContext.sampleRate);
 
-        // if (Math.abs(pitch - lastPitch) > maxChange){
-        //     lastPitch = pitch;
-        //     pitch = maxChange * Math.abs(pitch) / pitch;
-        // }else{
-        //     lastPitch = pitch;
-        // }
-
-        // Only show valid pitches (ignore very high or very low outliers)
+        // Adjust the pitch range to include lower notes
         if (pitch !== -1 && pitch >= 10 && pitch <= 1000) {
             clearDisplay();  // Clear previous Hz before showing new pitch
             addRealTimePitchMessage(`Pitch: ${Math.round(pitch)} Hz`);
-            console.log(pitches[stringSelected - 1]);
+
             if (stringSelected > 0) {
                 const deviation = pitch - pitches[stringSelected - 1];  // Calculate deviation
-                const scaleFactor = 1;  // Adjust this to fine-tune needle sensitivity
+                const scaleFactor = 1;
                 const rotationAngle = deviation * scaleFactor;
             
                 setNeedleRotation(rotationAngle);  // Rotate needle based on pitch deviation
-                
+
                 const needle = document.getElementById('needle');
 
+                // Update the guide message based on deviation
                 if (deviation > distancesBetweenHz[stringSelected - 1] / 5) {
                     guide.textContent = 'Loosen the string';
                     needle.style.backgroundColor = 'red';
@@ -178,21 +171,32 @@ const startPitchDetection = () => {
                     guide.textContent = 'Perfect';
                     needle.style.backgroundColor = 'green';
                 }
-                // if (pitch - (distancesBetweenHz[stringSelected - 1] / 5) > pitches[stringSelected - 1]){
-                //     // need to loosen the string
-                //     guide.textContent = 'Loosen the string';
-    
-                // }else if(pitch + (distancesBetweenHz[stringSelected - 1] / 5) < pitches[stringSelected - 1]){
-                //     // need to tighten the string
-                //     guide.textContent = 'Tighten the string';
-    
-                // }else{
-                //     guide.textContent = 'Perfect';
-                // }
             }
         }
-    }, 100);  // Update pitch every 0.2 seconds
+    }, 100);  // Update pitch every 0.1 seconds
 };
+
+// Band-pass filter to eliminate noise outside of violin frequency range
+const setupBandPassFilter = () => {
+    const bandpassFilter = audioContext.createBiquadFilter();
+    bandpassFilter.type = "bandpass";
+    bandpassFilter.frequency.setValueAtTime(1000, audioContext.currentTime);  // Center of violin's range
+    bandpassFilter.Q = 1.5;  // Adjust for how narrow or wide the filter is
+    return bandpassFilter;
+};
+
+// Adding the bandpass filter to the audio chain
+const startAudioProcessing = () => {
+    const microphone = audioContext.createMediaStreamSource(stream);
+    const bandpassFilter = setupBandPassFilter();
+    const lowpassFilter = audioContext.createBiquadFilter();
+    lowpassFilter.frequency.setValueAtTime(2000, audioContext.currentTime);
+
+    microphone.connect(bandpassFilter);
+    bandpassFilter.connect(lowpassFilter);
+    lowpassFilter.connect(analyser);
+};
+
 
 const addRealTimePitchMessage = (text) => {
     const msg = document.createElement('p');
@@ -217,10 +221,17 @@ const autoCorrelate = (buffer, sampleRate) => {
     }
 
     rms = Math.sqrt(rms / SIZE);
-
-    if (rms < 0.3) {  // If the signal is too weak
-        return -1;
+    
+    if (instrument == 'Violin' && stringSelected == 4){
+        if (rms < 0.065) {  // If the signal is too weak
+            return -1;
+        }
+    }else{
+        if (rms < 0.15) {  // If the signal is too weak
+            return -1;
+        }
     }
+
 
     let lastCorrelation = 1;
 
