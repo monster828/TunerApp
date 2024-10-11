@@ -105,7 +105,7 @@ function SetupAudio(){
                 // Apply a low-pass filter to remove high frequencies
                 const lowpassFilter = audioContext.createBiquadFilter();
                 lowpassFilter.type = "lowpass";
-                lowpassFilter.frequency.setValueAtTime(2000, audioContext.currentTime);  // Limit to 4kHz
+                lowpassFilter.frequency.setValueAtTime(1000, audioContext.currentTime);  // Limit to 4kHz
 
                 streamSource = audioContext.createMediaStreamSource(stream);
                 streamSource.connect(lowpassFilter);
