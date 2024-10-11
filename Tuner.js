@@ -222,9 +222,15 @@ const autoCorrelate = (buffer, sampleRate) => {
 
     rms = Math.sqrt(rms / SIZE);
     
-    if (instrument == 'Violin' && stringSelected == 4){
-        if (rms < 0.065) {  // If the signal is too weak
-            return -1;
+    if (instrument == 'Violin'){
+        if (stringSelected == 4){
+            if (rms < 0.065) {  // If the signal is too weak
+                return -1;
+            }
+        }else{
+            if (rms < 0.1) {  // If the signal is too weak
+                return -1;
+            }
         }
     }else{
         if (rms < 0.15) {  // If the signal is too weak
