@@ -228,12 +228,12 @@ const autoCorrelate = (buffer, sampleRate) => {
                 return -1;
             }
         }else{
-            if (rms < 0.1) {  // If the signal is too weak
+            if (rms < 0.8) {  // If the signal is too weak
                 return -1;
             }
         }
     }else{
-        if (rms < 0.15) {  // If the signal is too weak
+        if (rms < 0.1) {  // If the signal is too weak
             return -1;
         }
     }
