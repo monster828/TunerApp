@@ -100,7 +100,7 @@ function SetupAudio(){
                 // Create an audio context and analyser
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
-                analyser.fftSize = 1024;  // Increase FFT size for better resolution
+                analyser.fftSize = 16384;  // Increase FFT size for better resolution
 
                 // Apply a low-pass filter to remove high frequencies
                 const lowpassFilter = audioContext.createBiquadFilter();
